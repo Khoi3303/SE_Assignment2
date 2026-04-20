@@ -1,0 +1,90 @@
+﻿@model List<WebCoreMVC_Exer4.Controllers.FilterResult>
+@{
+    ViewData["Title"] = "Thống Kê Dữ Liệu";
+}
+
+<h2 style="margin-top:20px; color: #0d6efd;">Thống Kê & Lọc Dữ Liệu (MVC)</h2>
+<hr />
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="p-4 bg-light rounded-3 border shadow-sm">
+            <form method="get" asp-action="Index">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Chọn nghiệp vụ lọc:</label>
+                    <select name="FilterType" id="filterType" class="form-select" onchange="toggleDropdowns()">
+                        <option value="0" selected="@(ViewBag.CurrentFilter == 0)">Top 5 sản phẩm bán chạy nhất</option>
+                        <option value="1" selected="@(ViewBag.CurrentFilter == 1)">Tìm các Mặt hàng theo Đại lý</option>
+                        <option value="2" selected="@(ViewBag.CurrentFilter == 2)">Tìm các Đại lý theo Mặt hàng</option>
+                    </select>
+                </div>
+
+                <div class="mb-3" id="divAgent" style="display:none;">
+                    <label class="form-label fw-bold">Chọn Đại lý:</label>
+                    <select name="AgentID" asp-items="ViewBag.AgentID" class="form-select"></select>
+                </div>
+
+                <div class="mb-3" id="divItem" style="display:none;">
+                    <label class="form-label fw-bold">Chọn Sản phẩm:</label>
+                    <select name="ItemID" asp-items="ViewBag.ItemID" class="form-select"></select>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 mt-2">🔍 Lọc Dữ Liệu</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <div class="p-4 bg-white rounded-3 border shadow-sm" style="min-height: 320px;">
+            <table class="table table-bordered table-striped table-hover">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Tên (Sản phẩm / Đại lý)</th>
+                        <th>Tổng số lượng</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Count > 0)
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="fw-bold">@item.Name</td>
+                                <td>@item.TotalQuantity</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="2" class="text-center text-muted py-5" style="font-style:italic;">
+                                Chưa có dữ liệu. Vui lòng chọn điều kiện và bấm Lọc.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleDropdowns() {
+        var type = document.getElementById("filterType").value;
+        var divAgent = document.getElementById("divAgent");
+        var divItem = document.getElementById("divItem");
+
+        if (type === "0") {
+            divAgent.style.display = "none";
+            divItem.style.display = "none";
+        } else if (type === "1") {
+            divAgent.style.display = "block";
+            divItem.style.display = "none";
+        } else if (type === "2") {
+            divAgent.style.display = "none";
+            divItem.style.display = "block";
+        }
+    }
+    // Gọi hàm một lần khi trang vừa load xong để giữ đúng trạng thái UI
+    window.onload = toggleDropdowns;
+</script>

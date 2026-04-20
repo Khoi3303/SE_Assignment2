@@ -1,0 +1,184 @@
+﻿@model Web_Assignment2.Models.Order
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>In Hóa Đơn - #@Model.OrderID</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f0f0;
+            padding: 20px;
+        }
+
+        .invoice-box {
+            max-width: 800px;
+            margin: auto;
+            padding: 30px;
+            border: 1px solid #eee;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+            font-size: 16px;
+            line-height: 24px;
+            background-color: #fff;
+        }
+
+            .invoice-box table {
+                width: 100%;
+                line-height: inherit;
+                text-align: left;
+                border-collapse: collapse;
+            }
+
+                .invoice-box table td {
+                    padding: 10px;
+                    vertical-align: top;
+                }
+
+                .invoice-box table tr.top table td {
+                    padding-bottom: 20px;
+                }
+
+                    .invoice-box table tr.top table td.title {
+                        font-size: 35px;
+                        line-height: 45px;
+                        color: #333;
+                        font-weight: bold;
+                    }
+
+                .invoice-box table tr.information table td {
+                    padding-bottom: 40px;
+                }
+
+                .invoice-box table tr.heading td {
+                    background: #eee;
+                    border-bottom: 1px solid #ddd;
+                    font-weight: bold;
+                }
+
+                .invoice-box table tr.item td {
+                    border-bottom: 1px solid #eee;
+                }
+
+                .invoice-box table tr.item.last td {
+                    border-bottom: none;
+                }
+
+                .invoice-box table tr.total td:nth-child(4) {
+                    border-top: 2px solid #eee;
+                    font-weight: bold;
+                    font-size: 18px;
+                    color: red;
+                }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .btn-print {
+            display: block;
+            width: 200px;
+            margin: 20px auto;
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            text-align: center;
+        }
+
+            .btn-print:hover {
+                background-color: #218838;
+            }
+
+        /* Cấu hình khi in: Ẩn nút in đi để tờ giấy in ra được sạch sẽ */
+        @@media print {
+            .btn-print {
+                display: none;
+            }
+
+            body {
+                background-color: #fff;
+                padding: 0;
+            }
+
+            .invoice-box {
+                box-shadow: none;
+                border: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="btn-print" onclick="window.print()">🖨️ IN HÓA ĐƠN NÀY</button>
+
+    <div class="invoice-box">
+        <table cellpadding="0" cellspacing="0">
+            <tr class="top">
+                <td colspan="4">
+                    <table>
+                        <tr>
+                            <td class="title">HÓA ĐƠN BÁN HÀNG</td>
+                            <td class="text-right">
+                                Mã Đơn: <strong>#@Model.OrderID</strong><br>
+                                Ngày lập: @Model.OrderDate.Value.ToString("dd/MM/yyyy HH:mm")
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr class="information">
+                <td colspan="4">
+                    <table>
+                        <tr>
+                            <td>
+                                <strong>Thông tin khách hàng (Đại lý):</strong><br>
+                                Tên Đại lý: @Model.Agent.AgentName<br>
+                                Địa chỉ: @Model.Agent.Address
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+            <tr class="heading">
+                <td>Tên Sản Phẩm</td>
+                <td class="text-center">Số Lượng</td>
+                <td class="text-right">Đơn Giá</td>
+                <td class="text-right">Thành Tiền</td>
+            </tr>
+
+            @{ double total = 0; }
+            @foreach (var item in Model.OrderDetails)
+            {
+                // Ép kiểu sang double để tính toán không bị lỗi
+                double subTotal = Convert.ToDouble(item.Quantity ?? 0) * Convert.ToDouble(item.UnitAmount ?? 0);
+                total += subTotal;
+                <tr class="item">
+                    <td>@item.Item.ItemName</td>
+                    <td class="text-center">@item.Quantity</td>
+                    <td class="text-right">@string.Format("{0:N0}", item.UnitAmount)</td>
+                    <td class="text-right">@string.Format("{0:N0}", subTotal)</td>
+                </tr>
+            }
+
+            <tr class="total">
+                <td colspan="3" class="text-right"><strong>TỔNG THANH TOÁN:</strong></td>
+                <td class="text-right">@string.Format("{0:N0}", total) VNĐ</td>
+            </tr>
+        </table>
+
+        <div class="text-center" style="margin-top: 40px; font-style: italic; color: #666;">
+            Cảm ơn quý khách đã tin tưởng và sử dụng dịch vụ!
+        </div>
+    </div>
+</body>
+</html>

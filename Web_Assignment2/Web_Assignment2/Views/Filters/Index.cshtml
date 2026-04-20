@@ -1,0 +1,90 @@
+﻿@model IEnumerable<Web_Assignment2.Controllers.FilterResult>
+@{ ViewBag.Title = "Thống Kê Dữ Liệu"; }
+
+<h2 style="margin-top:20px;">Thống Kê & Lọc Dữ Liệu</h2>
+<hr />
+
+<div class="row">
+    <div class="col-md-4">
+        <div style="background-color:#f9f9f9; padding:20px; border-radius:8px; border:1px solid #ddd;">
+            <form action="/Filters/Index" method="post">
+
+                <div class="form-group">
+                    <label>Chọn nghiệp vụ lọc:</label>
+                    <select name="filterType" id="filterType" class="form-control" onchange="toggleDropdowns()">
+                        <option value="0" @(ViewBag.CurrentFilter == 0 ? "selected" : "")>Top 5 sản phẩm bán chạy nhất</option>
+                        <option value="1" @(ViewBag.CurrentFilter == 1 ? "selected" : "")>Tìm các Mặt hàng theo Đại lý</option>
+                        <option value="2" @(ViewBag.CurrentFilter == 2 ? "selected" : "")>Tìm các Đại lý theo Mặt hàng</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="divAgent" style="display:none; margin-top:15px;">
+                    <label>Chọn Đại lý:</label>
+                    @Html.DropDownList("AgentID", null, htmlAttributes: new { @class = "form-control" })
+                </div>
+
+                <div class="form-group" id="divItem" style="display:none; margin-top:15px;">
+                    <label>Chọn Sản phẩm:</label>
+                    @Html.DropDownList("ItemID", null, htmlAttributes: new { @class = "form-control" })
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width:100%; margin-top:20px;">🔍 Lọc dữ liệu</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-md-8">
+        <div style="background-color:#fff; padding:20px; border-radius:8px; border:1px solid #ddd; min-height: 300px;">
+            <table class="table table-bordered table-striped">
+                <thead style="background-color:#337ab7; color:white;">
+                    <tr>
+                        <th>Tên (Sản phẩm / Đại lý)</th>
+                        <th>Tổng số lượng</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td style="font-weight:bold;">@item.Name</td>
+                                <td>@item.TotalQuantity</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="2" class="text-center" style="color:#999; font-style:italic; padding:30px;">
+                                Chưa có dữ liệu. Vui lòng bấm Lọc để xem kết quả.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleDropdowns() {
+        var type = document.getElementById("filterType").value;
+        var divAgent = document.getElementById("divAgent");
+        var divItem = document.getElementById("divItem");
+
+        if (type === "0") {
+            divAgent.style.display = "none";
+            divItem.style.display = "none";
+        } else if (type === "1") {
+            divAgent.style.display = "block";
+            divItem.style.display = "none";
+        } else if (type === "2") {
+            divAgent.style.display = "none";
+            divItem.style.display = "block";
+        }
+    }
+
+    // Tự động chạy hàm kiểm tra trạng thái ngay khi trang vừa tải xong
+    window.onload = toggleDropdowns;
+</script>

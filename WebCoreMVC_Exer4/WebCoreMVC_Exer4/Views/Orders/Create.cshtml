@@ -1,0 +1,73 @@
+﻿@model List<WebCoreMVC_Exer4.Models.CartItem>
+@{
+    ViewData["Title"] = "Lập Đơn Hàng (MVC)";
+}
+
+<h2 style="margin-top:20px; color: #0d6efd;">Lập Đơn Hàng Mới (MVC)</h2>
+<hr />
+
+<div class="p-4 mb-4 bg-light rounded-3 border">
+    <h4 class="mb-3">1. Chọn sản phẩm mua</h4>
+    <form method="post" asp-action="AddToCart" class="d-flex gap-3 align-items-end">
+        <div>
+            <label class="form-label fw-bold">Sản phẩm:</label>
+            <select name="ItemID" asp-items="ViewBag.ItemID" class="form-select" style="min-width:300px;"></select>
+        </div>
+        <div>
+            <label class="form-label fw-bold">Số lượng:</label>
+            <input type="number" name="Quantity" value="1" min="1" class="form-control" style="width:100px;" required />
+        </div>
+        <div>
+            <button type="submit" class="btn btn-primary">Thêm vào giỏ</button>
+        </div>
+    </form>
+</div>
+
+<h4 class="mb-3">2. Giỏ hàng hiện tại</h4>
+<table class="table table-bordered table-hover shadow-sm">
+    <thead class="table-dark">
+        <tr>
+            <th>Tên Sản Phẩm</th>
+            <th class="text-center">Số lượng</th>
+            <th class="text-end">Đơn giá</th>
+            <th class="text-end">Thành tiền</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            double total = 0;
+            if (Model != null && Model.Count > 0)
+            {
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.ItemName</td>
+                        <td class="text-center">@item.Quantity</td>
+                        <td class="text-end">@item.UnitAmount.ToString("N0")</td>
+                        <td class="text-end">@item.SubTotal.ToString("N0")</td>
+                    </tr>
+                    total += item.SubTotal;
+                }
+            }
+            else
+            {
+                <tr><td colspan="4" class="text-center text-muted py-3">Giỏ hàng đang trống</td></tr>
+            }
+        }
+        <tr class="table-warning fw-bold fs-5">
+            <td colspan="3" class="text-end">TỔNG CỘNG:</td>
+            <td class="text-end text-danger">@total.ToString("N0") VNĐ</td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="p-4 mt-4 rounded-3 border border-info bg-info bg-opacity-10">
+    <h4 class="mb-3">3. Xác nhận và Lưu Đơn</h4>
+    <form method="post" asp-action="SaveOrder">
+        <div class="mb-3">
+            <label class="form-label fw-bold">Đại lý mua hàng:</label>
+            <select name="AgentID" asp-items="ViewBag.AgentID" class="form-select" style="max-width:400px;"></select>
+        </div>
+        <button type="submit" class="btn btn-success btn-lg px-5">LƯU ĐƠN HÀNG</button>
+    </form>
+</div>
