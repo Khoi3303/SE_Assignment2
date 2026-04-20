@@ -1,9 +1,11 @@
 ===================================================
+
 ASSIGNMENT 2 - SOFTWARE ENGINEERING
 Team Members:
 1. Le Hoang Minh Khoi (524H0102) - Leader for Assignment 2
 2. Nguyen Thanh Tien (524H0035)
 3. Nguyen Minh Dang (524H0082)
+
 ===================================================
 
 1. GITHUB REPOSITORY LINK:
